@@ -141,9 +141,13 @@ function mutually_exclusive_subsets(rules: string[][]) {
     })
     if (!theRule) return 'invalid option' // not possible in router entity
     if (arrValue.length === 1) return true
+    const arr = arrValue.slice()
+    arr.shift()
     let count = arrValue.length - 1
-    for (let i = 1; i < theRule.length; i++) {
-      if (arrValue.includes(theRule[i])) {
+    for (let i = 0; i < theRule.length; i++) {
+      const index = arr.indexOf(theRule[i])
+      if (index > -1) {
+        arr.splice(index, 1)
         count--
       }
     }

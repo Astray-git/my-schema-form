@@ -39,3 +39,26 @@ describe('validator: match_none', () => {
     expect(checkFn('//test')).toBe('error')
   })
 })
+
+describe('validator: mutually_exclusive_subsets', () => {
+  const RULE = [
+    ['http', 'https'],
+    ['tcp', 'tls', 'udp'],
+    ['tls_passthrough'],
+    ['grpc', 'grpcs'],
+  ]
+  const FAIL_MSG_CONFLICT = 'conflict options'
+
+  it('works', () => {
+    const fn = validators.mutually_exclusive_subsets(RULE)
+
+    // pass
+    expect(fn(new Set(['http']))).toBe(true)
+    expect(fn(new Set(['tcp', 'udp']))).toBe(true)
+    expect(fn(new Set(['grpc', 'grpcs']))).toBe(true)
+    // fail
+    expect(fn(new Set(['foo', 'bar']))).toBe('invalid option')
+    expect(fn(new Set(['http', 'grpc']))).toBe(FAIL_MSG_CONFLICT)
+    expect(fn(new Set(['tls', 'tls_passthrough']))).toBe(FAIL_MSG_CONFLICT)
+  })
+})
