@@ -300,7 +300,11 @@ function verifyFields(
         return
       }
       if (key in validators) {
-        const fn = validators[key as keyof typeof validators](val)
+        const fn = (
+          validators[key as keyof typeof validators] as (
+            rule: any
+          ) => (v: any) => true | string
+        )(val)
         const res = fn(formValue)
         if (res !== true) {
           validateResult.value[itemKey] = {
